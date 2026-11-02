@@ -28,6 +28,7 @@
       "sha256": "f9573b504829542f8f7fd72b5da112be06063217c8c9247655333a1a3f3c2e34"
     }
   ],
-  "snapshot_sha256": "8a6b0a257ca6b82c32b6e3efc3c0e4496c8aabb7279fa32cbff20df006a3eaa9",
-  "download_access": "Public NCBI E-utilities, no account, API key or restricted data access required."
+  "snapshot_sha256": "5813c2b66bcc37fa35d3264c4bd78f6b97a4c49f8d722be976eccf1bbb3b546c",
+  "download_access": "Public NCBI E-utilities, no account, API key or restricted data access required.",
+  "snapshot_file": "genbank_snapshot.gb.xz"
 }

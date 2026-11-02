@@ -1,6 +1,6 @@
 """Intentionally refresh a public query snapshot. Never called by the app or training."""
 from pathlib import Path
-import gzip,hashlib,json,time
+import lzma,hashlib,json,time
 import requests
 ROOT=Path(__file__).resolve().parent
 QUERY='dengue[All Fields] AND "Sri Lanka"[All Fields] AND 9000:12000[SLEN] AND ("1800/01/01"[PDAT] : "2026/11/02"[PDAT])'
@@ -29,8 +29,8 @@ def main():
         manifest['batches'].append({'file':target.name,'sha256':hashlib.sha256(payload).hexdigest()})
         print(target.name,len(payload),flush=True)
     # Replace the committed snapshot only after the entire retrieval has succeeded.
-    snapshot=ROOT/'data/genbank_snapshot.gb.gz';temporary=snapshot.with_suffix('.tmp')
-    temporary.write_bytes(gzip.compress(b''.join(texts),mtime=0));temporary.replace(snapshot)
+    snapshot=ROOT/'data/genbank_snapshot.gb.xz';temporary=snapshot.with_suffix('.tmp')
+    temporary.write_bytes(lzma.compress(b''.join(texts),preset=9));temporary.replace(snapshot)
     manifest['snapshot_sha256']=hashlib.sha256(snapshot.read_bytes()).hexdigest()
     manifest['download_access']='Public NCBI E-utilities; no login, restricted account or API key required.'
     (out/'search.json').write_text(json.dumps(search,indent=2));(out/'manifest.json').write_text(json.dumps(manifest,indent=2));(ROOT/'data/raw_manifest.json').write_text(json.dumps(manifest,indent=2))

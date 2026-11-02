@@ -1,7 +1,7 @@
 """Compile genuine local public records; never synthesize observations or labels."""
 from pathlib import Path
 from collections import Counter
-import hashlib,json,re,gzip,io
+import hashlib,json,re,gzip,io,lzma
 import pandas as pd
 from Bio import SeqIO
 from features import FEATURES,describe,clean_sequence
@@ -20,9 +20,9 @@ def label_from_record(record,q):
 
 def main():
     rows=[];audit=[];seen=set();sequences=[]
-    sources=[ROOT/'data/genbank_snapshot.gb.gz']
+    sources=[ROOT/'data/genbank_snapshot.gb.xz']
     for f in sources:
-        handle=io.StringIO(gzip.decompress(f.read_bytes()).decode()) if f.suffix=='.gz' else f
+        handle=io.StringIO(lzma.decompress(f.read_bytes()).decode()) if f.suffix=='.xz' else f
         for record in SeqIO.parse(handle,'genbank'):
             if record.id in seen:continue
             seen.add(record.id)

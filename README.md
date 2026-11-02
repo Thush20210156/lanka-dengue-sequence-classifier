@@ -30,7 +30,7 @@ The current split has 229 training, 77 validation and 77 test genomes. Three-fol
 Perfect scores do not establish perfect deployment performance. Only eight test genomes are available for each of DENV-1 and DENV-4. Related outbreak strains can cross partitions; no phylogenetic/homology clustering was performed. QDA uses imperfect Gaussian assumptions and can report collinear variables; positive regularization stabilizes covariance estimation. See the report for limitations and uncertainty.
 
 ## Rebuild the compiled dataset
-The original public snapshot is committed as data/genbank_snapshot.gb.gz. Run `python compile_dataset.py` to recreate features and audit. It always uses the committed compressed snapshot for reproducibility. Run `python fetch_data.py` only if intentionally refreshing the public search; database updates can change counts or annotations. Preserve the supplied snapshot for the submitted experiment. The app never downloads records at startup.
+The original public snapshot is committed as data/genbank_snapshot.gb.xz. Run `python compile_dataset.py` to recreate features and audit. It always uses the committed compressed snapshot for reproducibility. Run `python fetch_data.py` only if intentionally refreshing the public search; database updates can change counts or annotations. Preserve the supplied snapshot for the submitted experiment. The app never downloads records at startup.
 
 ## Azure deployment
 Follow docs/AZURE_GUIDE.md for student sign-in, subscription/credit checks and CLI setup, then run:

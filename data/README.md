@@ -7,7 +7,7 @@ Classes: DENV-1 51; DENV-2 216; DENV-3 90; DENV-4 26.
 Collection years with known metadata: 1978-2025; three records lack a year.
 
 Files:
-- genbank_snapshot.gb.gz: public source records, compressed, including excluded candidates for audit.
+- genbank_snapshot.gb.xz: public source records, compressed, including excluded candidates for audit.
 - sri_lanka_dengue.fasta.gz: only included near-complete viral sequences; accession headers only.
 - sri_lanka_dengue_features.csv: provenance metadata, target and 15 dinucleotide frequencies.
 - dataset_summary.json: quality-filter counts and class sizes.
