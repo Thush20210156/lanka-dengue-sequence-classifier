@@ -1,52 +1,73 @@
 # Lanka Dengue Sequence Classifier
 
-A reproducible MSc machine-learning project using public dengue genomes collected in Sri Lanka. It classifies an already-known dengue genome into DENV-1, DENV-2, DENV-3 or DENV-4 with regularized Quadratic Discriminant Analysis (QDA).
+Classify a known dengue genome as **DENV-1, DENV-2, DENV-3 or DENV-4** using regularized Quadratic Discriminant Analysis (QDA).
+
+**[Open the live application](https://lanka-dengue-demo.politecliff-7391470b.centralindia.azurecontainerapps.io/)**
+
+Hosted on Azure Container Apps in Central India. The first visit after inactivity may take longer while the app starts.
+
+## Features
+
+- Select a public held-out example or paste a near-complete dengue genome.
+- View the predicted serotype and model probabilities.
+- Explore local sensitivity explanations, permutation importance and partial dependence.
+- Inspect dataset provenance and evaluation results.
+
+## Dataset and method
+
+The dataset contains **383 public GenBank genomes with Sri Lankan source metadata**: 51 DENV-1, 216 DENV-2, 90 DENV-3 and 26 DENV-4.
+
+The model uses 15 dinucleotide frequencies. Accession names, collection dates, location metadata and labels are excluded from the predictors. Exact duplicate genomes and identical isolate identifiers remain in the same evaluation partition.
+
+The original researchers collected and sequenced the samples; this project compiles their public records and derives features. See [dataset attribution and curation](data/README.md) and the [record audit](data/record_audit.csv).
+
+## Results
+
+The split contains 229 training, 77 validation and 77 test genomes. Model selection uses group-aware cross-validation on the training set.
+
+| Held-out metric | QDA | Majority baseline |
+| --- | ---: | ---: |
+| Accuracy | 1.0000 | 0.5065 |
+| Macro-F1 | 1.0000 | 0.1681 |
+
+These results describe a small, selected public dataset. Related outbreak strains may cross partitions, and each of DENV-1 and DENV-4 has only eight test examples. The perfect score does not establish perfect future performance. See the [report](docs/Sri_Lankan_Dengue_Report.pdf) for the temporal check, negative control and limitations.
 
 ## Run locally
-Use Python 3.11 (recommended) or the locally tested Python 3.12.7.
+
+Use Python 3.11 or 3.12.
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python train.py
 python verify.py
-streamlit run app.py
+python -m streamlit run app.py
 ```
-Open http://localhost:8501. On Windows, use `.venv\Scripts\Activate.ps1` for local PowerShell activation; the Azure scripts require Bash/WSL.
 
-## What is included
-- 383 real public Sri Lankan dengue genome records, not simulated observations.
-- Four serotypes: DENV-1 51, DENV-2 216, DENV-3 90, DENV-4 26.
-- A dated GenBank snapshot, accession-level provenance and an exclusion audit.
-- Fifteen sequence-derived dinucleotide frequencies. All metadata and target labels are excluded from prediction.
-- Exact-genome/isolate group separation; training-only cross-validation; frozen validation/test results.
-- Permutation feature importance, partial dependence and a clearly labelled local sensitivity path.
-- Streamlit frontend accepting one public near-complete viral sequence or a held-out example.
-- Azure deployment and cleanup scripts, a beginner guide, report and video materials under docs/.
+Open [http://localhost:8501](http://localhost:8501). On Windows PowerShell, activate the environment with `.venv\Scripts\Activate.ps1`.
 
-## Results and their limits
-The current split has 229 training, 77 validation and 77 test genomes. Three-fold group-aware training CV selects reg_param=0.05, then a frozen model is refitted on training+validation. The held-out test accuracy and macro-F1 are 1.0; the majority baseline accuracy is 0.5065 and macro-F1 is 0.1681. A shuffled-training-label control yields macro-F1 0.1857. A supplementary train-through-2018/test-from-2019 check gives accuracy 0.9925 but contains no DENV-4 test samples.
+To rebuild the feature table from the archived public records, run `python compile_dataset.py` before training.
 
-Perfect scores do not establish perfect deployment performance. Only eight test genomes are available for each of DENV-1 and DENV-4. Related outbreak strains can cross partitions; no phylogenetic/homology clustering was performed. QDA uses imperfect Gaussian assumptions and can report collinear variables; positive regularization stabilizes covariance estimation. See the report for limitations and uncertainty.
+## Project files
 
-## Rebuild the compiled dataset
-The original public snapshot is committed as data/genbank_snapshot.gb.xz. Run `python compile_dataset.py` to recreate features and audit. It always uses the committed compressed snapshot for reproducibility. Run `python fetch_data.py` only if intentionally refreshing the public search; database updates can change counts or annotations. Preserve the supplied snapshot for the submitted experiment. The app never downloads records at startup.
+| Path | Purpose |
+| --- | --- |
+| `features.py` | Sequence validation and descriptor extraction |
+| `compile_dataset.py` | Dataset curation from the archived GenBank snapshot |
+| `train.py` | Model selection, evaluation and explainability |
+| `app.py` | Streamlit interface |
+| `verify.py` | Data, split, prediction and frontend checks |
+| `data/` | Dataset, source snapshot and attribution |
+| `results/` | Trained model, metrics and plots |
+| `docs/` | Report, deployment guide and demonstration script |
 
-## Azure deployment
-Follow docs/AZURE_GUIDE.md for student sign-in, subscription/credit checks and CLI setup, then run:
-```bash
-bash scripts/deploy_azure.sh
-```
-The default cloud-build route needs no local Docker. If student ACR Tasks are unsupported, start Docker Desktop and run `BUILD_MODE=docker bash scripts/deploy_azure.sh`. Both routes create resources that can consume credits. The script saves non-secret resource names and URL in deployment-state.json. It does not claim deployment until the live health check succeeds; test the frontend manually afterward. Cleanup is interactive: `bash scripts/cleanup_azure.sh` after marking.
+## Deployment
 
-## Verification
-`python verify.py` checks all 383 sequence hashes and descriptors, disjoint accession/group/hash splits, recalculated metrics and probabilities, invalid input handling and frontend submissions for all four serotypes plus pasted sequence input. GitHub Actions reproduces training, runs those checks, builds the image and tests its health endpoint. Check the actual Actions run before claiming container verification.
+The live app runs on **Azure Container Apps**, with its image stored in **Azure Container Registry**. The [Azure image workflow](.github/workflows/azure-image.yml) builds and pushes images using passwordless authentication. The [verification workflow](.github/workflows/ci.yml) checks dataset reconstruction, training, the frontend and the Docker container.
 
-## Data access and attribution
-Source: public NCBI GenBank records whose source location is Sri Lanka. No GISAID, login-only sequence data or controlled patient dataset is used. Original sequence generation belongs to the source researchers. This project compiles and analyses public records; it does not claim new sample collection. See data/README.md, source_url and study_pubmed columns. Public access is not a blanket assertion that each submitter's data have a CC0 license.
+See the [deployment guide](docs/AZURE_GUIDE.md) for setup details. Student-subscription region and build restrictions can vary.
 
-## Scope
-The application assumes a near-complete, positive-sense dengue genome represented with A/C/G/T (U is converted to T). It is an annotation demonstration, not a dengue detector, diagnostic, severity predictor, clinical assay or phylogenetic typing replacement. Do not upload private biological or patient records.
+## Intended use
 
-## Submission
-Review the report, fill in your student/course details, follow your institution's assistance-disclosure rules, and understand/reproduce the analysis. Run deployment in your own Azure account, add the real URL/date and evidence, and record the 3-5 minute demonstration. The guide and script do not substitute for a successful live deployment or a real video recording.
+This is a research and teaching prototype for already-known, positive-sense dengue genomes of 10,000–12,000 bases. Model probabilities are uncalibrated. It is not a diagnostic or disease-severity tool; use public sequences rather than private patient records.
