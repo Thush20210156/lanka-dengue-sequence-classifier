@@ -6,3 +6,7 @@ streamlit==1.37.1
 joblib==1.4.2
 biopython==1.84
 requests==2.32.3
+# Critical transitive compatibility pins for NumPy 1.x and the Streamlit test runner.
+pyarrow==17.0.0
+scipy==1.13.1
+altair==5.0.1
