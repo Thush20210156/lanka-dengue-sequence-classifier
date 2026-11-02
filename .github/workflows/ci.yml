@@ -1,0 +1,46 @@
+name: Reproduce and check
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MPLCONFIGDIR: /tmp/matplotlib
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python train.py
+      - run: python verify.py
+      - name: Build the serving container
+        run: docker build -t lanka-dengue:test .
+      - name: Smoke-test the container
+        run: |
+          docker run -d --name dengue-smoke -p 8501:8501 lanka-dengue:test
+          for attempt in $(seq 1 30); do
+            if curl --fail http://localhost:8501/_stcore/health; then
+              docker rm -f dengue-smoke
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs dengue-smoke
+          docker rm -f dengue-smoke
+          exit 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reproduced-results
+          path: |
+            results/metrics.json
+            results/*.csv
+            results/*.png

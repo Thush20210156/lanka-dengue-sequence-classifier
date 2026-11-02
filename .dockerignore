@@ -1,0 +1,9 @@
+.venv
+.git
+__pycache__
+data/raw
+data/genbank_snapshot.gb.gz
+data/sri_lanka_dengue.fasta
+*.zip
+deployment-state.json
+deployment-evidence

@@ -1,0 +1,123 @@
+{
+  "negative_control_test": {
+    "accuracy": 0.4025974025974026,
+    "balanced_accuracy": 0.22355769230769232,
+    "macro_f1": 0.18566849816849818,
+    "weighted_f1": 0.3426097711811998,
+    "macro_ovr_auc": 0.28332933578798986
+  },
+  "accuracy_wilson_95": [
+    0.9524815747175658,
+    0.9999999999999999
+  ],
+  "dataset_rows": 383,
+  "dataset_sha256": "844a40414e412ba092171b34c75fae6b5822d3b8d1ffaef0cdfe4aff05c224b0",
+  "split_sizes": {
+    "train": 229,
+    "validation": 77,
+    "test": 77
+  },
+  "split_class_counts": {
+    "train": {
+      "DENV-2": 132,
+      "DENV-3": 52,
+      "DENV-1": 33,
+      "DENV-4": 12
+    },
+    "validation": {
+      "DENV-2": 45,
+      "DENV-3": 16,
+      "DENV-1": 10,
+      "DENV-4": 6
+    },
+    "test": {
+      "DENV-2": 39,
+      "DENV-3": 22,
+      "DENV-1": 8,
+      "DENV-4": 8
+    }
+  },
+  "split_group_counts": {
+    "train": 226,
+    "validation": 76,
+    "test": 76
+  },
+  "selected_regularization": 0.05,
+  "cv_macro_f1": 0.9954404820061878,
+  "validation": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0,
+    "macro_ovr_auc": 1.0
+  },
+  "test": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "macro_f1": 1.0,
+    "weighted_f1": 1.0,
+    "macro_ovr_auc": 1.0
+  },
+  "baseline_test": {
+    "accuracy": 0.5064935064935064,
+    "balanced_accuracy": 0.25,
+    "macro_f1": 0.16810344827586207,
+    "weighted_f1": 0.3405732198835647,
+    "macro_ovr_auc": 0.5
+  },
+  "confusion_matrix": [
+    [
+      8,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      39,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      22,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      8
+    ]
+  ],
+  "macro_f1_group_bootstrap_95_percentile": [
+    1.0,
+    1.0
+  ],
+  "warning_messages": [
+    "Variables are collinear"
+  ],
+  "temporal_check": {
+    "train_through_year": 2018,
+    "test_from_year": 2019,
+    "train_rows": 246,
+    "test_rows": 133,
+    "train_class_counts": {
+      "DENV-2": 167,
+      "DENV-1": 33,
+      "DENV-4": 25,
+      "DENV-3": 21
+    },
+    "test_class_counts": {
+      "DENV-3": 67,
+      "DENV-2": 48,
+      "DENV-1": 18
+    },
+    "accuracy": 0.9924812030075187,
+    "macro_f1_present_classes": 0.9874822190611665,
+    "note": "DENV-4 has no post-2018 observations here; this is not a four-class temporal validation. Missing years omitted. Not used for tuning."
+  },
+  "python": "3.12.7",
+  "sklearn": "1.5.1"
+}
