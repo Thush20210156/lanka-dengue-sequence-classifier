@@ -20,6 +20,9 @@ jobs:
           python-version: '3.11'
           cache: pip
       - run: pip install -r requirements.txt
+      - run: python compile_dataset.py
+      - name: Check snapshot curation parity
+        run: git diff --exit-code -- data/sri_lanka_dengue_features.csv data/record_audit.csv data/dataset_summary.json
       - run: python train.py
       - run: python verify.py
       - name: Build the serving container

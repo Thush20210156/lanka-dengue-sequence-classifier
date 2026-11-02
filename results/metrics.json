@@ -1,4 +1,9 @@
 {
+  "joint_all_descriptors_permutation": {
+    "mean_macro_f1_drop": 0.7472270784770785,
+    "shuffle_sd": 0.05793082556369941,
+    "repeats": 30
+  },
   "negative_control_test": {
     "accuracy": 0.4025974025974026,
     "balanced_accuracy": 0.22355769230769232,

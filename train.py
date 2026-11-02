@@ -52,7 +52,7 @@ def main():
     imp=permutation_importance(model,X.iloc[test],y.iloc[test],scoring='f1_macro',n_repeats=30,random_state=45)
     importance=pd.DataFrame({'feature':FEATURES,'mean_macro_f1_drop':imp.importances_mean,'shuffle_sd':imp.importances_std}).sort_values('mean_macro_f1_drop',ascending=False);importance.to_csv(out/'permutation_importance.csv',index=False)
     fig,ax=plt.subplots(figsize=(7,5));p=importance.iloc[::-1];ax.barh(p.feature,p.mean_macro_f1_drop,xerr=p.shuffle_sd);ax.set_xlabel('Macro-F1 decrease after shuffling (mean +/- SD)');fig.tight_layout();fig.savefig(out/'importance.png',dpi=180);plt.close(fig)
-    top=importance.feature.iloc[:2].tolist();fig,ax=plt.subplots(1,2,figsize=(8,3));PartialDependenceDisplay.from_estimator(model,X.iloc[dev],top,target='DENV-1',ax=ax,method='brute');fig.suptitle('Partial dependence: probability of DENV-1');fig.tight_layout();fig.savefig(out/'pdp.png',dpi=180);plt.close(fig)
+    top=importance.feature.iloc[:2].tolist();fig,ax=plt.subplots(1,2,figsize=(8,3));PartialDependenceDisplay.from_estimator(model,X.iloc[dev],top,target='DENV-1',ax=ax,method='brute');fig.suptitle('Partial dependence: probability of DENV-1');[a.set_ylim(0,1) for a in ax];fig.tight_layout();fig.savefig(out/'pdp.png',dpi=180);plt.close(fig)
     # Bootstrap whole exact/isolate groups, not individual rows, without refitting.
     rng=np.random.default_rng(46);testgroups=groups.iloc[test].to_numpy();unique=np.unique(testgroups);boot=[];truth=y.iloc[test].to_numpy()
     for _ in range(2000):
@@ -69,7 +69,11 @@ def main():
     negmetrics=metrics(negative,X.iloc[test],y.iloc[test])
     # Wilson interval for accuracy remains informative when all predictions are correct.
     n=len(test);phat=tm['accuracy'];z=1.959963984540054;den=1+z*z/n;center=(phat+z*z/(2*n))/den;half=z*np.sqrt(phat*(1-phat)/n+z*z/(4*n*n))/den
-    meta={'negative_control_test':negmetrics,'accuracy_wilson_95':[center-half,min(1.,center+half)],'dataset_rows':len(df),'dataset_sha256':hashlib.sha256((ROOT/'data/sri_lanka_dengue_features.csv').read_bytes()).hexdigest(),'split_sizes':{k:len(v) for k,v in splits.items()},'split_class_counts':{k:df.set_index('accession').loc[v].serotype.value_counts().to_dict() for k,v in splits.items()},'split_group_counts':{k:int(df.set_index('accession').loc[v].group_id.nunique()) for k,v in splits.items()},'selected_regularization':search.best_params_['qda__reg_param'],'cv_macro_f1':search.best_score_,'validation':vm,'test':tm,'baseline_test':bm,'confusion_matrix':cm.tolist(),'macro_f1_group_bootstrap_95_percentile':np.quantile(boot,[.025,.975]).tolist(),'warning_messages':sorted(set(str(w.message) for w in caught)),'temporal_check':temporal,'python':platform.python_version(),'sklearn':sklearn.__version__}
+    joint_rng=np.random.default_rng(48);joint=[]
+    for _ in range(30):
+        shuffled=X.iloc[test].iloc[joint_rng.permutation(len(test))].copy();shuffled.index=X.iloc[test].index
+        joint.append(tm['macro_f1']-f1_score(y.iloc[test],model.predict(shuffled),labels=LABELS,average='macro',zero_division=0))
+    meta={'joint_all_descriptors_permutation':{'mean_macro_f1_drop':float(np.mean(joint)),'shuffle_sd':float(np.std(joint)),'repeats':30},'negative_control_test':negmetrics,'accuracy_wilson_95':[center-half,min(1.,center+half)],'dataset_rows':len(df),'dataset_sha256':hashlib.sha256((ROOT/'data/sri_lanka_dengue_features.csv').read_bytes()).hexdigest(),'split_sizes':{k:len(v) for k,v in splits.items()},'split_class_counts':{k:df.set_index('accession').loc[v].serotype.value_counts().to_dict() for k,v in splits.items()},'split_group_counts':{k:int(df.set_index('accession').loc[v].group_id.nunique()) for k,v in splits.items()},'selected_regularization':search.best_params_['qda__reg_param'],'cv_macro_f1':search.best_score_,'validation':vm,'test':tm,'baseline_test':bm,'confusion_matrix':cm.tolist(),'macro_f1_group_bootstrap_95_percentile':np.quantile(boot,[.025,.975]).tolist(),'warning_messages':sorted(set(str(w.message) for w in caught)),'temporal_check':temporal,'python':platform.python_version(),'sklearn':sklearn.__version__}
     (out/'metrics.json').write_text(json.dumps(meta,indent=2))
     X.iloc[dev].agg(['min','max','median']).to_json(out/'development_reference.json')
     print(json.dumps(meta,indent=2))

@@ -20,8 +20,7 @@ def label_from_record(record,q):
 
 def main():
     rows=[];audit=[];seen=set();sequences=[]
-    sources=sorted((ROOT/'data/raw').glob('batch_*.gb'))
-    if not sources:sources=[ROOT/'data/genbank_snapshot.gb.gz']
+    sources=[ROOT/'data/genbank_snapshot.gb.gz']
     for f in sources:
         handle=io.StringIO(gzip.decompress(f.read_bytes()).decode()) if f.suffix=='.gz' else f
         for record in SeqIO.parse(handle,'genbank'):
@@ -68,6 +67,8 @@ def main():
         for acc in df.accession:
             out.write(f'>{acc}\n');s=mapping[acc]
             out.write('\n'.join(s[i:i+80] for i in range(0,len(s),80))+'\n')
+    with gzip.GzipFile(filename=str(ROOT/'data/sri_lanka_dengue.fasta.gz'),mode='wb',mtime=0) as stream:
+        stream.write((ROOT/'data/sri_lanka_dengue.fasta').read_bytes())
     summary={'candidate_records':len(seen),'included_records':len(df),'excluded_records':sum(not r['included'] for r in audit),'exclusion_reasons':dict(Counter(r['reason'] for r in audit if r['reason'])),'class_counts':df.serotype.value_counts().to_dict(),'independent_exact_isolate_groups':df.group_id.nunique(),'duplicate_sequence_records':int(df.sequence_sha256.duplicated().sum()),'duplicate_isolate_records':int(df.isolate[df.isolate!=''].duplicated().sum()),'year_min':int(df.collection_year.min()),'year_max':int(df.collection_year.max()),'missing_years':int(df.collection_year.isna().sum()),'features':FEATURES}
     (ROOT/'data/dataset_summary.json').write_text(json.dumps(summary,indent=2));print(json.dumps(summary,indent=2))
 if __name__=='__main__':main()
