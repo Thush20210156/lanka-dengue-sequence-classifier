@@ -1,0 +1,37 @@
+name: Build image for Azure
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/azure-image.yml'
+      - 'Dockerfile'
+      - 'requirements.txt'
+      - 'app.py'
+      - 'features.py'
+      - 'train.py'
+      - 'data/**'
+      - 'results/**'
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      REGISTRY: lkdengue1793655615.azurecr.io
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the tested serving container
+        run: docker build --platform linux/amd64 -t "$REGISTRY/dengue-app:$GITHUB_SHA" .
+      - name: Sign in to Azure with a registry-scoped identity
+        uses: azure/login@v2
+        with:
+          client-id: e51d2934-4a78-4d78-ac37-379d4794f6bb
+          tenant-id: aac0c564-6c5e-4b05-8dc3-408087f77f76
+          subscription-id: 4d8b8cec-deb3-450f-8258-99e4a9100c20
+      - name: Push immutable image to Azure Container Registry
+        run: |
+          az acr login --name lkdengue1793655615
+          docker push "$REGISTRY/dengue-app:$GITHUB_SHA"
