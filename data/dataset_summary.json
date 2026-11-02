@@ -1,0 +1,41 @@
+{
+  "candidate_records": 410,
+  "included_records": 383,
+  "excluded_records": 27,
+  "exclusion_reasons": {
+    "More than 1% of bases are ambiguous.": 11,
+    "not dengue virus": 5,
+    "Expected a near-complete genome of 10000-12000 bases.": 1,
+    "no unambiguous explicit serotype annotation": 9,
+    "source country is not Sri Lanka": 1
+  },
+  "class_counts": {
+    "DENV-2": 216,
+    "DENV-3": 90,
+    "DENV-1": 51,
+    "DENV-4": 26
+  },
+  "independent_exact_isolate_groups": 378,
+  "duplicate_sequence_records": 5,
+  "duplicate_isolate_records": 1,
+  "year_min": 1978,
+  "year_max": 2025,
+  "missing_years": 3,
+  "features": [
+    "di_AA",
+    "di_AC",
+    "di_AG",
+    "di_AT",
+    "di_CA",
+    "di_CC",
+    "di_CG",
+    "di_CT",
+    "di_GA",
+    "di_GC",
+    "di_GG",
+    "di_GT",
+    "di_TA",
+    "di_TC",
+    "di_TG"
+  ]
+}

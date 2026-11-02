@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.azure/
+data/raw/
+data/sri_lanka_dengue.fasta
+deployment-state.json
+deployment-evidence/

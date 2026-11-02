@@ -1,0 +1,33 @@
+{
+  "query": "dengue[All Fields] AND \"Sri Lanka\"[All Fields] AND 9000:12000[SLEN] AND (\"1800/01/01\"[PDAT] : \"2026/11/02\"[PDAT])",
+  "retrieved_date": "2026-11-02",
+  "count": 410,
+  "batches": [
+    {
+      "file": "batch_0000.gb",
+      "sha256": "473d2dff5b27b25102c2fe696ae422b2b434a654d7b300f364cc7d3b95ccdc2d"
+    },
+    {
+      "file": "batch_0075.gb",
+      "sha256": "104a0b59bf5c74079094d24895152f20cd7633b6736898f75ddf6ee46d756238"
+    },
+    {
+      "file": "batch_0150.gb",
+      "sha256": "cd87dd754844c9da931c1adb0721e00da9f64a11b844f4be98802bbcb3c83df4"
+    },
+    {
+      "file": "batch_0225.gb",
+      "sha256": "bae6117b47b9c1c375ad65863c7204c6b4d708b6fd4b17804b620cd2d103970d"
+    },
+    {
+      "file": "batch_0300.gb",
+      "sha256": "eb5b8a28269631faf841ddddc3ecddd8c1ffd1d6e7520094eb263d895e28424d"
+    },
+    {
+      "file": "batch_0375.gb",
+      "sha256": "f9573b504829542f8f7fd72b5da112be06063217c8c9247655333a1a3f3c2e34"
+    }
+  ],
+  "snapshot_sha256": "8a6b0a257ca6b82c32b6e3efc3c0e4496c8aabb7279fa32cbff20df006a3eaa9",
+  "download_access": "Public NCBI E-utilities, no account, API key or restricted data access required."
+}
